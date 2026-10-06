@@ -1,0 +1,26 @@
+@startuml container_infrastructure
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_LEFT_RIGHT()
+
+title Container Diagram — Local Platform
+
+Person(developer, "Developer", "Opens GitLab and Argo CD in the browser.")
+
+System_Boundary(cluster, "kind cluster shekel") {
+    Container(ingress, "ingress-nginx", "ingress-nginx", "Default Ingress class. Host port 8929 maps to container port 80.")
+    Container(gitlab, "GitLab", "GitLab", "UI at gitlab.127.0.0.1.nip.io. Chart 10.4.1 does not bundle PostgreSQL, Redis, or object storage.")
+    ContainerDb(postgres, "PostgreSQL", "PostgreSQL", "GitLab database gitlabhq_production.")
+    ContainerDb(redis, "Redis", "Redis", "GitLab cache and job queues.")
+    ContainerDb(minio, "MinIO", "MinIO", "Buckets git-lfs, gitlab-artifacts, gitlab-uploads, gitlab-packages, and gitlab-backups.")
+    Container(argocd, "Argo CD", "Argo CD", "UI at argocd.127.0.0.1.nip.io. No Application is registered.")
+}
+
+Rel(developer, ingress, "Opens the UIs", "HTTP :8929")
+Rel(ingress, gitlab, "Routes", "gitlab.127.0.0.1.nip.io")
+Rel(ingress, argocd, "Routes", "argocd.127.0.0.1.nip.io")
+Rel(gitlab, postgres, "Reads and writes", "SQL")
+Rel(gitlab, redis, "Reads and writes")
+Rel(gitlab, minio, "Reads and writes", "S3")
+
+@enduml

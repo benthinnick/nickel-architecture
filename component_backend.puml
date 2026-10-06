@@ -1,0 +1,43 @@
+@startuml component_backend
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Backend Components
+
+Container_Boundary(backend, "Backend (FastAPI)") {
+    Component(api, "HTTP API", "FastAPI", "Routers for health, products, customers, sellers, cart, and orders.")
+    Component(oidc, "OIDC verifier", "Python", "Validates Bearer JWTs and JIT-provisions a customer from the token subject.")
+    Component(products, "Product module", "Python", "Public catalog of active products. Seller create is accepted as an outbox event.")
+    Component(search, "Search module", "Python", "Name search and autocomplete over active products.")
+    Component(sellers, "Seller module", "Python", "Owner and member access, stock changes, hide, and unhide.")
+    Component(cart, "Cart module", "Python", "Session or customer cart. Checkout creates an order and decrements stock.")
+    Component(orders, "Order module", "Python", "Order reads. Payment and delivery stubs advance order status.")
+    Component(outbox, "Transactional outbox", "Python", "Stores product and order events, then publishes them or handles them in-process.")
+}
+
+Container(keycloak, "Keycloak", "OIDC", "Access tokens and admin user lookup.")
+ContainerDb(postgres, "PostgreSQL", "PostgreSQL", "Products, sellers, customers, orders, payments, deliveries, and outbox rows.")
+ContainerDb(redis, "Redis", "Redis", "Carts.")
+ContainerDb(search_index, "Search index", "Elasticsearch or memory", "Active product names.")
+ContainerQueue(kafka, "Event bus", "Kafka or in-process", "Topics shekel.products and shekel.orders.")
+
+Rel(api, oidc, "Authenticates Bearer calls")
+Rel(api, products, "Catalog reads and seller product commands")
+Rel(api, search, "Search and autocomplete")
+Rel(api, sellers, "Seller and membership commands")
+Rel(api, cart, "Cart and checkout")
+Rel(api, orders, "Order, payment, and delivery")
+
+Rel(oidc, keycloak, "JWKS and admin API")
+Rel(products, postgres, "Reads and writes")
+Rel(sellers, postgres, "Reads and writes")
+Rel(orders, postgres, "Reads and writes")
+Rel(cart, redis, "Reads and writes")
+Rel(cart, products, "Checks stock and price")
+Rel(search, search_index, "Queries and updates")
+Rel(products, outbox, "Enqueue product events")
+Rel(orders, outbox, "Enqueue order and payment events")
+Rel(outbox, kafka, "Publish or handle in-process")
+Rel(outbox, search, "Update the index from product events")
+Rel(outbox, orders, "Stub delivery after a succeeded payment")
+
+@enduml

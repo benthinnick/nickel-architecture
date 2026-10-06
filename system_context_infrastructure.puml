@@ -1,0 +1,15 @@
+@startuml system_context_infrastructure
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title System Context — Local Platform
+
+Person(developer, "Developer", "Runs the local platform and uses GitLab and Argo CD.")
+
+System(platform, "Shekel local platform", "Kind cluster on Docker Desktop. ingress-nginx, GitLab, and Argo CD.")
+
+System_Ext(repos, "Shekel application repos", "Application source and manifests stay outside this platform. Argo CD has no Application registered.")
+
+Rel(developer, platform, "Opens GitLab and Argo CD", "HTTP :8929")
+Rel(platform, repos, "Does not deploy applications")
+
+@enduml

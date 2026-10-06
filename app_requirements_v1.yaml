@@ -1,0 +1,37 @@
+MoSCoW:
+  must-have:
+    functional:
+      - products page
+      - search
+      - cart
+      - login/authorization/authentication
+      - external payment system
+      - order state machine
+      - return item, return money
+      - invoices, emails, notifications
+    non-functional:
+      - scalable
+      - high-load
+      - observable
+      - easy to deploy and fix
+  should-have:
+    functional:
+      - delivery estimations
+      - recommendations
+      - tech support
+      - return
+  could-have:
+    functional:
+      - inventory system, multiple warehouses
+      - group of items (color)
+    non-functional:
+      - cloud
+  won't-have:
+    functional:
+      - route calculation
+      - videos on items
+      - comments
+      - ratings
+      - better offers
+      - on-delivery payment
+      - courier service

@@ -1,0 +1,42 @@
+@startuml container_level
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_LEFT_RIGHT()
+
+title Container Diagram
+
+Person(shopper, "Shopper", "Browses products, manages a cart, and places orders.")
+
+System_Boundary(shekel, "Shekel") {
+    Container(root, "single-spa root", "HTML / TypeScript", "Shell with navigation. Mounts one microfrontend for the active route.")
+    Container(catalog, "Catalog microfrontend", "React", "Product list, search, and product detail. Reads local fixtures.")
+    Container(cart_mf, "Cart microfrontend", "React", "Cart lines and checkout review. Reads local fixtures.")
+    Container(account, "Account microfrontend", "React", "Sign-in placeholder and order status. Reads local fixtures.")
+    Container(backend, "Backend", "FastAPI", "Products, search, customers, sellers, cart, orders, payments, and deliveries in one process.")
+    Container(keycloak, "Keycloak", "OIDC", "Issues access tokens. Public client shekel-web and audience shekel-api.")
+    ContainerDb(postgres, "PostgreSQL", "PostgreSQL", "Products, sellers, customers, orders, payments, deliveries, and the transactional outbox.")
+    ContainerDb(redis, "Redis", "Redis", "Active carts keyed by session or customer.")
+    ContainerDb(search, "Search index", "Elasticsearch or memory", "Active product names. The default index is in-memory.")
+    ContainerQueue(kafka, "Event bus", "Kafka or in-process", "Topics shekel.products and shekel.orders. With Kafka off, handlers run in-process.")
+}
+
+System_Ext(payment, "Payment provider", "Stubbed inside the backend.")
+
+Rel(shopper, root, "Uses", "HTTPS")
+Rel(root, catalog, "Mounts", "/ /products /search")
+Rel(root, cart_mf, "Mounts", "/cart /checkout")
+Rel(root, account, "Mounts", "/login /orders")
+
+Rel(catalog, backend, "Designed API calls not wired yet", "HTTPS/JSON")
+Rel(cart_mf, backend, "Designed API calls not wired yet", "HTTPS/JSON")
+Rel(account, backend, "Designed API calls not wired yet", "HTTPS/JSON")
+Rel(account, keycloak, "Designed login not wired yet", "OIDC")
+
+Rel(backend, keycloak, "Validates JWT and looks up users", "OIDC")
+Rel(backend, postgres, "Reads and writes", "SQL")
+Rel(backend, redis, "Reads and writes carts")
+Rel(backend, search, "Indexes and searches active products")
+Rel(backend, kafka, "Publishes outbox events")
+Rel(backend, payment, "Stub payment result")
+
+@enduml

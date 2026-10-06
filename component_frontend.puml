@@ -1,0 +1,25 @@
+@startuml component_frontend
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Marketplace Frontend
+
+Person(shopper, "Shopper", "Uses the storefront.")
+
+Container_Boundary(web, "Marketplace (single-spa)") {
+    Component(root, "Root config", "single-spa", "Header, navigation, cart count, and route activity.")
+    Component(catalog, "Catalog", "React", "Product list, name search, autocomplete, and product detail.")
+    Component(cart, "Cart", "React", "Cart lines, quantity updates, and checkout review.")
+    Component(account, "Account", "React", "Local sign-in plus order payment and delivery status.")
+    Component(fixtures, "Fixtures", "TypeScript", "In-memory products, cart, and orders shaped like API responses. One store on window.")
+}
+
+Rel(shopper, root, "Navigates", "HTTPS")
+Rel(root, catalog, "Active for catalog routes", "/ /products /products/:id /search")
+Rel(root, cart, "Active for cart routes", "/cart /checkout")
+Rel(root, account, "Active for account routes", "/login /orders/:id")
+Rel(catalog, fixtures, "Reads products and updates the cart")
+Rel(cart, fixtures, "Updates the cart and creates orders")
+Rel(account, fixtures, "Reads orders and updates payment and delivery")
+Rel(root, fixtures, "Reads cart count and customer")
+
+@enduml
