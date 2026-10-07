@@ -18,7 +18,7 @@ Container(keycloak, "Keycloak", "OIDC", "Access tokens and admin user lookup.")
 ContainerDb(postgres, "PostgreSQL", "PostgreSQL", "Products, sellers, customers, orders, payments, deliveries, and outbox rows.")
 ContainerDb(redis, "Redis", "Redis", "Carts.")
 ContainerDb(search_index, "Search index", "Elasticsearch or memory", "Active product names.")
-ContainerQueue(kafka, "Event bus", "Kafka or in-process", "Topics shekel.products and shekel.orders.")
+ContainerQueue(kafka, "Event bus", "Kafka or in-process", "Topics nickel.products and nickel.orders.")
 
 Rel(api, oidc, "Authenticates Bearer calls")
 Rel(api, products, "Catalog reads and seller product commands")

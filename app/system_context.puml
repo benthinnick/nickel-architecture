@@ -5,13 +5,13 @@ title System Context
 
 Person(shopper, "Shopper", "Browses the catalog, manages a cart, and checks out.")
 
-System(shekel, "Shekel", "Marketplace storefront and FastAPI monolith for products, sellers, carts, and orders.")
+System(nickel, "Nickel", "Marketplace storefront and FastAPI monolith for products, sellers, carts, and orders.")
 
 System_Ext(keycloak, "Keycloak", "Issues OIDC access tokens. The API validates them and JIT-provisions customers.")
 System_Ext(payment, "Payment provider", "Stubbed in-process today. The API records payment status locally.")
 
-Rel(shopper, shekel, "Browses and buys", "HTTPS")
-Rel(shekel, keycloak, "Validates access tokens", "OIDC")
-Rel(shekel, payment, "Records payment result", "Stub")
+Rel(shopper, nickel, "Browses and buys", "HTTPS")
+Rel(nickel, keycloak, "Validates access tokens", "OIDC")
+Rel(nickel, payment, "Records payment result", "Stub")
 
 @enduml

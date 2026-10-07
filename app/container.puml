@@ -7,17 +7,17 @@ title Container Diagram
 
 Person(shopper, "Shopper", "Browses products, manages a cart, and places orders.")
 
-System_Boundary(shekel, "Shekel") {
+System_Boundary(nickel, "Nickel") {
     Container(root, "single-spa root", "HTML / TypeScript", "Shell with navigation. Mounts one microfrontend for the active route.")
     Container(catalog, "Catalog microfrontend", "React", "Product list, search, and product detail. Reads local fixtures.")
     Container(cart_mf, "Cart microfrontend", "React", "Cart lines and checkout review. Reads local fixtures.")
     Container(account, "Account microfrontend", "React", "Sign-in placeholder and order status. Reads local fixtures.")
     Container(backend, "Backend", "FastAPI", "Products, search, customers, sellers, cart, orders, payments, and deliveries in one process.")
-    Container(keycloak, "Keycloak", "OIDC", "Issues access tokens. Public client shekel-web and audience shekel-api.")
+    Container(keycloak, "Keycloak", "OIDC", "Issues access tokens. Public client nickel-web and audience nickel-api.")
     ContainerDb(postgres, "PostgreSQL", "PostgreSQL", "Products, sellers, customers, orders, payments, deliveries, and the transactional outbox.")
     ContainerDb(redis, "Redis", "Redis", "Active carts keyed by session or customer.")
     ContainerDb(search, "Search index", "Elasticsearch or memory", "Active product names. The default index is in-memory.")
-    ContainerQueue(kafka, "Event bus", "Kafka or in-process", "Topics shekel.products and shekel.orders. With Kafka off, handlers run in-process.")
+    ContainerQueue(kafka, "Event bus", "Kafka or in-process", "Topics nickel.products and nickel.orders. With Kafka off, handlers run in-process.")
 }
 
 System_Ext(payment, "Payment provider", "Stubbed inside the backend.")
